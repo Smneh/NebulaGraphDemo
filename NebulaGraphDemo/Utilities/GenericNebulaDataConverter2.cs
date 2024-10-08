@@ -77,7 +77,7 @@ public static class GenericNebulaDataConverter2
             else
             {
                 columns.TryGetValue(i, out var columnName);
-                var prop = properties.FirstOrDefault(p => p.Name == columnName);
+                var prop = properties.FirstOrDefault(p => p.Name.ToLower() == columnName?.ToLower());
                 if (prop != null)
                 {
                     SetPropertyValue(entity, prop, value);

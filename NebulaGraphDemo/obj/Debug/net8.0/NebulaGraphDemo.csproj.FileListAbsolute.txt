@@ -35,3 +35,4 @@ C:\Users\smneh\RiderProjects\NebulaGraphDemo\NebulaGraphDemo\obj\Debug\net8.0\Ne
 C:\Users\smneh\RiderProjects\NebulaGraphDemo\NebulaGraphDemo\obj\Debug\net8.0\NebulaGraphDemo.genruntimeconfig.cache
 C:\Users\smneh\RiderProjects\NebulaGraphDemo\NebulaGraphDemo\obj\Debug\net8.0\ref\NebulaGraphDemo.dll
 C:\Users\smneh\RiderProjects\NebulaGraphDemo\NebulaGraphDemo\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\smneh\RiderProjects\NebulaGraphDemo\NebulaGraphDemo\obj\Debug\net8.0\NebulaGraphDemo.sourcelink.json

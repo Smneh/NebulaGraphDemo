@@ -1,6 +1,8 @@
-﻿using NebulaGraphDemo.Models;
+﻿using NebulaGraphDemo.Dto;
+using NebulaGraphDemo.Models;
 using NebulaGraphDemo.Repository.Sessions;
 using NebulaGraphDemo.Utilities;
+using Comment = NebulaGraphDemo.Models.Comment;
 
 namespace NebulaGraphDemo.Repository.Data;
 
@@ -110,4 +112,35 @@ public class UserPostRelationRepository(NebulaSessionManager sessionManager)
         var comments = GenericNebulaDataConverter.ConvertToEntityList<Comment>(result);
         return comments;
     }
+    
+    public async Task<List<Dto.Post>> GetPostsLikedByUserAsync(string username)
+    {
+        var query = $"MATCH (u:user{{Username: '{username}'}})-[:like]->(p:post) RETURN p;";
+        var result = await _queryExecutor.ExecuteAsync(query);
+        
+        var users = GenericNebulaDataConverter.ConvertToEntityList<Dto.Post>(result);
+        return users;
+    }
+
+    
+    public async Task<List<PostsVisitedByUserDto>> GetPostsVisitedByUserAsync(string username)
+    {
+        var query = @$"MATCH (u:user{{Username: '{username}'}})-[:visit]->(p:post)
+                        MATCH (u2:user)-[:register]->(p)
+                        RETURN 
+                        p.post.UUid as Uuid,
+                        p.post.IssuerId as IssuerId,
+                        p.post.Attachments as Attachments,
+                        p.post.Content as Content,
+                        p.post.RegDateTime as RegDateTime,
+                        u2.user.Username as PostRegUser,
+                        u2.user.Fullname as PostRegUserFullname,
+                        u2.user.ProfilePictureId as ProfilePictureId;";
+        
+        var result = await _queryExecutor.ExecuteAsync(query);
+        
+        var posts = GenericNebulaDataConverter2.ConvertToEntityList<PostsVisitedByUserDto>(result);
+        return posts;
+    }
+
 }

@@ -29,9 +29,8 @@ class Program
             _commentRepository = new CommentRepository(sessionManager);
             _postUserCommentRelationRepository = new PostUserCommentRelationRepository(sessionManager);
 
-            await CreateSchema();
-            
-            await Task.Delay(10000); // 10 seconds
+            // await CreateSchema();
+            // await Task.Delay(10000); // 10 seconds
 
             var (username1, username2) = await UsersSection();
             var (uuid1, uuid2) = await PostsSection();
@@ -42,6 +41,9 @@ class Program
 
             await RegisterUserPostCommentRelationSection(username1, uuid1, cmUuid1);
             await RegisterUserPostCommentRelationSection(username2, uuid2, cmUuid2);
+
+            await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
+            await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
         }
         catch (Exception ex)
         {
@@ -124,51 +126,51 @@ class Program
     {
         var user1 = new User
         {
-            Username = "alice",
+            Username = "smneh",
             WorkspaceTitle = "Development",
             WorkspaceId = 1,
-            Fullname = "Alice Smith",
-            FatherName = "John Smith",
+            Fullname = "smneh am",
+            FatherName = "",
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,
             NationalId = "123456789",
             Address = "123 Main St",
             Tel = "123-456-7890",
-            Email = "alice@example.com",
+            Email = "smneh@example.com",
             Mobile = "555-555-5555",
-            ProfilePictureId = "profilepic123",
-            WallpaperPictureId = "wallpaper123",
+            ProfilePictureId = "smnehpic",
+            WallpaperPictureId = "smnehpic",
             Bio = "Software Developer",
             Description = "Loves coding and coffee.",
             OrgCode = "DEV",
             OrganizationalUnitId = 101,
             OrgInternalPhone = "123-456",
-            Id = 1,
+            Id = 3,
             ProjectColumns = "Column1"
         };
 
         var user2 = new User
         {
-            Username = "bob",
+            Username = "hamid",
             WorkspaceTitle = "Design",
             WorkspaceId = 2,
-            Fullname = "Bob Johnson",
+            Fullname = "hamid b",
             FatherName = null,
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,
             NationalId = "987654321",
             Address = "456 Main St",
             Tel = "987-654-3210",
-            Email = "bob@example.com",
+            Email = "hamid@example.com",
             Mobile = "444-444-4444",
-            ProfilePictureId = "profilepic456",
-            WallpaperPictureId = "wallpaper456",
+            ProfilePictureId = "hamidpic",
+            WallpaperPictureId = "hamidpic",
             Bio = "Graphic Designer",
             Description = "Passionate about design.",
             OrgCode = "DES",
             OrganizationalUnitId = 102,
             OrgInternalPhone = "987-654",
-            Id = 6,
+            Id = 4,
             ProjectColumns = "Column3"
         };
 
@@ -183,7 +185,7 @@ class Program
     {
         var post1 = new Post
         {
-            IssuerId = "alice",
+            IssuerId = "smneh",
             IssuerType = 1,
             RegDate = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             RegTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
@@ -191,13 +193,13 @@ class Program
             IsCommentable = true,
             IsPublic = true,
             PostType = 1,
-            RegUser = "alice",
+            RegUser = "smneh",
             UniqueId = Guid.NewGuid().ToString(),
             RegDateTime = DateTime.Now,
             LikeCount = 0,
             CommentCount = 0,
             ViewCount = 0,
-            Content = "This is the first post content.",
+            Content = "This is the smneh post content.",
             IssuerPostId = 1,
             IsSurvey = false,
             PostTypeId = 1,
@@ -232,7 +234,7 @@ class Program
 
         var post2 = new Post
         {
-            IssuerId = "bob",
+            IssuerId = "hamid",
             IssuerType = 1,
             RegDate = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             RegTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
@@ -240,13 +242,13 @@ class Program
             IsCommentable = true,
             IsPublic = false,
             PostType = 1,
-            RegUser = "bob",
+            RegUser = "hamid",
             UniqueId = Guid.NewGuid().ToString(),
             RegDateTime = DateTime.Now,
             LikeCount = 5,
             CommentCount = 2,
             ViewCount = 10,
-            Content = "This is the second post content.",
+            Content = "This is the hamid post content.",
             IssuerPostId = 2,
             IsSurvey = false,
             PostTypeId = 2,
@@ -340,8 +342,13 @@ class Program
         // await _userPostRelationRepository.AddPostCommentEdgeAsync(username, uuid, comment3);
 
         var posts = await _userPostRelationRepository.GetPostsRegisteredByUserAsync(username);
+        
         var likers = await _userPostRelationRepository.GetUsersWhoLikePostAsync(uuid);
+        var likedPosts = await _userPostRelationRepository.GetPostsLikedByUserAsync(username);
+        
         var visitors = await _userPostRelationRepository.GetUsersWhoVisitPostAsync(uuid);
+        var postsVisitedBy = await _userPostRelationRepository.GetPostsVisitedByUserAsync(username);
+        
         //var comments = await _userPostRelationRepository.GetPostCommentsAsync(uuid);
 
         Console.WriteLine($"Posts Registered By {username}");
@@ -361,6 +368,19 @@ class Program
         foreach (var u in visitors)
         {
             Console.WriteLine($"ID: {u.Id}, Username: {u.Username}, Fullname: {u.Fullname}, Email: {u.Email}");
+        }
+        
+        Console.WriteLine($"Posts Liked By {username}");
+        foreach (var p in likedPosts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}, RegDateTime: {postEntity.RegDateTime}");
+        }
+        
+        Console.WriteLine($"Posts Visited By {username}");
+        foreach (var p in postsVisitedBy)
+        {
+            Console.WriteLine($"IssuerId: {p.IssuerId}, Content: {p.Content}, RegDateTime: {p.RegDateTime}");
         }
         // Console.WriteLine($"Comments of post {uuid}");
         // foreach (var cm in comments)
@@ -430,6 +450,27 @@ class Program
         foreach (var c in userComments)
         {
             Console.WriteLine($"RegUser: {c.RegUser}, Content: {c.Content}, RegDateTime: {c.RegDateTime}");
+        }
+    }
+
+    private static async Task RegisterUserLikeCommentRelationSection(string username, string commentUuid)
+    {
+        await _postUserCommentRelationRepository.AddCommentLikeEdgeAsync(username, commentUuid);
+        
+        var commentLikes = await _postUserCommentRelationRepository.GetCommentLikesAsync(commentUuid);
+        var commentsLikedBy = await _postUserCommentRelationRepository.GetCommentsLikedByAsync(username);
+
+        Console.WriteLine($"Like of comment {commentUuid}");
+        foreach (var like in commentLikes)
+        {
+            Console.WriteLine($"username: {like.Username}, Fullname: {like.Fullname}, ProfilePictureId: {like.ProfilePictureId}");
+        }
+
+        Console.WriteLine($"Comments Liked By {username}");
+        foreach (var c in commentsLikedBy)
+        {
+            Console.WriteLine($"CommentRegUser: {c.CommentRegUser}, CommentContent: {c.Content}, RegDateTime: {c.RegDateTime}, " +
+                              $"PostRegUser: {c.PostRegUser}, PostContent {c.PostContent}");
         }
     }
 }
