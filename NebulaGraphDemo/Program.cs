@@ -29,8 +29,8 @@ class Program
             _commentRepository = new CommentRepository(sessionManager);
             _postUserCommentRelationRepository = new PostUserCommentRelationRepository(sessionManager);
 
-            // await CreateSchema();
-            // await Task.Delay(10000); // 10 seconds
+            await CreateSchema();
+            await Task.Delay(10000); // 10 seconds
 
             var (username1, username2) = await UsersSection();
             var (uuid1, uuid2) = await PostsSection();
@@ -67,7 +67,7 @@ class Program
         await _commentRepository.CreateCommentTagAsync();
         await _commentRepository.CreateIndexForCommentAsync();
         
-        await _postUserCommentRelationRepository.CreateCommentEdgeAsync();
+        //await _postUserCommentRelationRepository.CreateCommentEdgeAsync();
         await _postUserCommentRelationRepository.CreateBelongsToEdgeAsync();
     }
 
@@ -435,7 +435,7 @@ class Program
     {
         await _postUserCommentRelationRepository.AddCommentBelongsToEdgeAsync(commentUuid, postUuid);
 
-        await _postUserCommentRelationRepository.AddUserCommentedEdgeAsync(username, commentUuid);
+        await _postUserCommentRelationRepository.AddUserRegisterCommentEdgeAsync(username, commentUuid);
 
         var postComments = await _postUserCommentRelationRepository.GetPostCommentsAsync(postUuid);
         var userComments = await _postUserCommentRelationRepository.GetUserCommentsAsync(username);

@@ -16,12 +16,12 @@ public class PostUserCommentRelationRepository(NebulaSessionManager sessionManag
         await _queryExecutor.ExecuteAsync(query);
     }
     
-    public async Task CreateCommentEdgeAsync()
-    {
-        var query = "CREATE EDGE IF NOT EXISTS commented();";
-
-        await _queryExecutor.ExecuteAsync(query);
-    }
+    // public async Task CreateCommentEdgeAsync()
+    // {
+    //     var query = "CREATE EDGE IF NOT EXISTS commented();";
+    //
+    //     await _queryExecutor.ExecuteAsync(query);
+    // }
 
     public async Task AddCommentBelongsToEdgeAsync(string commentUUid, string postUUid)
     {
@@ -30,9 +30,9 @@ public class PostUserCommentRelationRepository(NebulaSessionManager sessionManag
         await _queryExecutor.ExecuteAsync(query);
     }
 
-    public async Task AddUserCommentedEdgeAsync(string username, string commentUUid)
+    public async Task AddUserRegisterCommentEdgeAsync(string username, string commentUUid)
     {
-        var query = $"INSERT EDGE commented () VALUES '{username}'->'{commentUUid}':();";
+        var query = $"INSERT EDGE register () VALUES '{username}'->'{commentUUid}':();";
 
         await _queryExecutor.ExecuteAsync(query);
     }
@@ -49,7 +49,7 @@ public class PostUserCommentRelationRepository(NebulaSessionManager sessionManag
     public async Task<List<Dto.Comment>> GetPostCommentsAsync(string postUUid)
     {
         //var query = $"MATCH (c:comment)-[:belongs_to]->(p:post {{Uuid: '{postUUid}'}}) RETURN c;";
-        var query = @$"MATCH (u:user)-[:commented]->(c:comment)-[:belongs_to]->(p:post {{uuid: '{postUUid}'}})
+        var query = @$"MATCH (u:user)-[:register]->(c:comment)-[:belongs_to]->(p:post {{uuid: '{postUUid}'}})
                     RETURN
                        u.user.Username as RegUser,
                        c.comment.Content as Content,
@@ -71,7 +71,7 @@ public class PostUserCommentRelationRepository(NebulaSessionManager sessionManag
 
     public async Task<List<Dto.Comment>> GetUserCommentsAsync(string username)
     {
-        var query = $"MATCH (u:user {{Username: '{username}'}})-[:commented]->(c:comment) RETURN c;";
+        var query = $"MATCH (u:user {{Username: '{username}'}})-[:register]->(c:comment) RETURN c;";
         var result = await _queryExecutor.ExecuteAsync(query);
 
         var comments = GenericNebulaDataConverter.ConvertToEntityList<Dto.Comment>(result);
@@ -102,7 +102,7 @@ public class PostUserCommentRelationRepository(NebulaSessionManager sessionManag
     public async Task<List<CommentsLikedByDto>> GetCommentsLikedByAsync(string username)
     {
         var query = @$"MATCH (u1:user {{Username: '{username}'}})-[:like]->(c:comment)-[:belongs_to]->(p:post)
-                        MATCH (u2:user)-[:commented]->(c)
+                        MATCH (u2:user)-[:register]->(c)
                         MATCH (u3:user)-[:register]->(p)
                         RETURN 
                             c.comment.Content as Content,
