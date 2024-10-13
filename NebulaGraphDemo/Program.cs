@@ -36,16 +36,16 @@ class Program
             //await CreateSchema();
             //await Task.Delay(10000); // 10 seconds
             //
-            //var (username1, username2) = await UsersSection();
+            var (username1, username2) = await UsersSection();
             // var (uuid1, uuid2) = await PostsSection();
-            // var (channelId1, channelId2) = await ChannelsSection();
+            var (channelId1, channelId2) = await ChannelsSection();
             //
-            // await RegisterFollowRelationSection(username1, channelId1);
-            // await RegisterFollowRelationSection(username1, channelId2);
-            // await RegisterFollowRelationSection(username2, channelId1);
-            // await RegisterFollowRelationSection(username2, channelId2);
-            // await RegisterFollowRelationSection(username1, username2);
-            // await RegisterFollowRelationSection(username2, username1);
+            await RegisterFollowRelationSection(username1, channelId1);
+            await RegisterFollowRelationSection(username1, channelId2);
+            await RegisterFollowRelationSection(username2, channelId1);
+            await RegisterFollowRelationSection(username2, channelId2);
+            await RegisterFollowRelationSection(username1, username2);
+            await RegisterFollowRelationSection(username2, username1);
             //
             // await RegisterPostRelationSection(username1, uuid1);
             // await RegisterPostRelationSection(username2, uuid2);
@@ -68,6 +68,7 @@ class Program
             // await GetChannelsFullDataSection();
             // await GetFollowDataFullDataSection(username1);
             // await GetFollowDataFullDataSection(username2);
+            await GetTopChannels(5);
         }
         catch (Exception ex)
         {
@@ -204,6 +205,17 @@ class Program
         }
     }
     
+    
+    private static async Task GetTopChannels(int limit)
+    {
+        var channels = await _channelRepository.GetTopChannels(limit);
+        Console.WriteLine("Top Channels:");
+        foreach (var ch in channels)
+        {
+            Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}, ProfilePictureId: {ch.ProfilePictureId}, FollowersCount: {ch.FollowerCount}");
+        }
+    }
+    
     private static async Task GetFollowDataFullDataSection(string username)
     {
         var followings = await _channelUserPostRelationRepository.GetUserFollowingsAsync(username);
@@ -225,10 +237,10 @@ class Program
     {
         var user1 = new User
         {
-            Username = "smneh",
+            Username = "smneh3",
             WorkspaceTitle = "Development",
             WorkspaceId = 1,
-            Fullname = "smneh am",
+            Fullname = "smneh am3",
             FatherName = "",
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,
@@ -250,10 +262,10 @@ class Program
 
         var user2 = new User
         {
-            Username = "hamid",
+            Username = "hamid3",
             WorkspaceTitle = "Design",
             WorkspaceId = 2,
-            Fullname = "hamid b",
+            Fullname = "hamid b3",
             FatherName = null,
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,

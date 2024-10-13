@@ -96,6 +96,25 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         return channels;
     }
 
+    public async Task<List<Dto.TopChannels>> GetTopChannels(int limit)
+    {
+        var query = $@"MATCH (ch:channel)<-[f:follow]-() 
+                        RETURN 
+                            ch.channel.channelId AS ChannelId, 
+                            ch.channel.title AS Title, 
+                            ch.channel.profilePictureId AS ProfilePictureId, 
+                            COUNT(f) AS FollowerCount 
+                        ORDER BY FollowerCount DESC 
+                        LIMIT {limit};"; 
+        
+        var result = await _queryExecutor.ExecuteAsync(query);
+        var channels = new List<Dto.TopChannels>();
+            
+        channels = GenericNebulaDataConverter2.ConvertToEntityList<Dto.TopChannels>(result);
+
+        return channels;
+    }
+
     public async Task<List<Dto.Admin>> GetChannelAdminsAsync(string channelId)
     {
         var query = @$"MATCH (admin:user)-[:admin_of]->(ch:channel {{channelId:'{channelId}'}}) 
