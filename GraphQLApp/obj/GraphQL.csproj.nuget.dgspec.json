@@ -1,0 +1,171 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\GraphQL\\GraphQL.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\GraphQL\\GraphQL.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\GraphQL\\GraphQL.csproj",
+        "projectName": "GraphQL",
+        "projectPath": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\GraphQL\\GraphQL.csproj",
+        "packagesPath": "C:\\Users\\smneh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\GraphQL\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\smneh\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\NebulaGraphDemo.csproj": {
+                "projectPath": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\NebulaGraphDemo.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "HotChocolate.AspNetCore": {
+              "target": "Package",
+              "version": "[14.0.0-rc.3.2, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.4.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\NebulaGraphDemo.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\NebulaGraphDemo.csproj",
+        "projectName": "NebulaGraphDemo",
+        "projectPath": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\NebulaGraphDemo.csproj",
+        "packagesPath": "C:\\Users\\smneh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\smneh\\RiderProjects\\NebulaGraphDemo\\NebulaGraphDemo\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\smneh\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "HotChocolate": {
+              "target": "Package",
+              "version": "[14.0.0-rc.3.2, )"
+            },
+            "Microsoft.AspNetCore": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.0-rc.2.24473.5, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[9.0.0-rc.2.24473.5, )"
+            },
+            "NebulaNet": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

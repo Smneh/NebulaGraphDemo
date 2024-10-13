@@ -43,6 +43,22 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "HotChocolate": {
+              "target": "Package",
+              "version": "[14.0.0-rc.3.2, )"
+            },
+            "Microsoft.AspNetCore": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.0-rc.2.24473.5, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[9.0.0-rc.2.24473.5, )"
+            },
             "NebulaNet": {
               "target": "Package",
               "version": "[3.0.0, )"

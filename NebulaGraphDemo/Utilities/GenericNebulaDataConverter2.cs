@@ -49,7 +49,8 @@ public static class GenericNebulaDataConverter2
                     {
                         foreach (var prop in properties)
                         {
-                            var propNameBytes = Encoding.ASCII.GetBytes(prop.Name);
+                            var propName = LowerFirstLetter(prop.Name);
+                            var propNameBytes = Encoding.ASCII.GetBytes(propName);
                             var matchingProp = tag.Props.FirstOrDefault(p => ByteArrayEquals(p.Key, propNameBytes));
                             if (matchingProp.Key != null)
                             {
@@ -65,7 +66,8 @@ public static class GenericNebulaDataConverter2
                 {
                     foreach (var prop in properties)
                     {
-                        var propNameBytes = Encoding.ASCII.GetBytes(prop.Name);
+                        var propName = LowerFirstLetter(prop.Name);
+                        var propNameBytes = Encoding.ASCII.GetBytes(propName);
                         var matchingProp = edge.Props.FirstOrDefault(p => ByteArrayEquals(p.Key, propNameBytes));
                         if (matchingProp.Key != null)
                         {
@@ -204,5 +206,13 @@ public static class GenericNebulaDataConverter2
         }
 
         return stringBuilder.ToString();
+    }
+
+    static string LowerFirstLetter(string propName)
+    {
+        if (string.IsNullOrEmpty(propName) || char.IsLower(propName[0]))
+            return propName; // Return as is if the first letter is already lowercase
+
+        return char.ToLower(propName[0]) + propName.Substring(1);
     }
 }

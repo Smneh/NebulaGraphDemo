@@ -23,7 +23,7 @@ public class Post
     public string ParentIssuerType { get; set; }
     public long SurveyId { get; set; }
     public int ShareCount { get; set; }
-    public string Uuid { get; set; } = default!;
+    public string uuid { get; set; } = default!;
     public string? ContentUuid { get; set; }
     public string? ParentUuid { get; set; }
     public bool Edited { get; set; } = false;

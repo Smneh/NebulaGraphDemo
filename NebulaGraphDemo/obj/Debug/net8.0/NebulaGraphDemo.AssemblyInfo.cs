@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NebulaGraphDemo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab11567899d3df07ad7d101bf4b48fc0dc2c61e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af74b6754cfe5ab32a02ee7b7d15cba9abecddb0")]
 [assembly: System.Reflection.AssemblyProductAttribute("NebulaGraphDemo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NebulaGraphDemo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
