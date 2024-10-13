@@ -96,7 +96,7 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         return channels;
     }
 
-    public async Task<List<NebulaGraphDemo.Dto.Admin>> GetChannelAdminsAsync(string channelId)
+    public async Task<List<Dto.Admin>> GetChannelAdminsAsync(string channelId)
     {
         var query = @$"MATCH (admin:user)-[:admin_of]->(ch:channel {{channelId:'{channelId}'}}) 
                         RETURN admin.user.username as Username,
@@ -104,9 +104,9 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
                         admin.user.profilePictureId as ProfilePictureId;";
         
         var result = await _queryExecutor.ExecuteAsync(query);
-        var admins = new List<NebulaGraphDemo.Dto.Admin>();
+        var admins = new List<Dto.Admin>();
             
-        admins = GenericNebulaDataConverter2.ConvertToEntityList<NebulaGraphDemo.Dto.Admin>(result);
+        admins = GenericNebulaDataConverter2.ConvertToEntityList<Dto.Admin>(result);
 
         return admins;
     }

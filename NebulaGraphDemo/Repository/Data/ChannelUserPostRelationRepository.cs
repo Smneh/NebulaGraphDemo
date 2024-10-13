@@ -1,4 +1,5 @@
-﻿using NebulaGraphDemo.Repository.Sessions;
+﻿using NebulaGraphDemo.Dto;
+using NebulaGraphDemo.Repository.Sessions;
 using NebulaGraphDemo.Utilities;
 
 namespace NebulaGraphDemo.Repository.Data;
@@ -44,25 +45,25 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
         await _queryExecutor.ExecuteAsync(query);
     }
     
-    public async Task<List<Dto.Post>> GetChannelPostsAsync(string channelId)
+    public async Task<List<Post>> GetChannelPostsAsync(string channelId)
     {
         var query = $"MATCH (p:post)-[:belongs_to]->(ch:channel {{channelId: '{channelId}'}}) RETURN p;";
         var result = await _queryExecutor.ExecuteAsync(query);
         
-        var posts = GenericNebulaDataConverter.ConvertToEntityList<Dto.Post>(result);
+        var posts = GenericNebulaDataConverter.ConvertToEntityList<Post>(result);
         return posts;
     }
     
-    public async Task<List<Dto.Post>> GetUserPostsAsync(string username)
+    public async Task<List<Post>> GetUserPostsAsync(string username)
     {
         var query = $"MATCH (p:post)-[:belongs_to]->(u:user {{Username: '{username}'}}) RETURN p;";
         var result = await _queryExecutor.ExecuteAsync(query);
         
-        var posts = GenericNebulaDataConverter.ConvertToEntityList<Dto.Post>(result);
+        var posts = GenericNebulaDataConverter.ConvertToEntityList<Post>(result);
         return posts;
     }
     
-    public async Task<List<Dto.Post>> GetUserTimelinePostsAsync(string username)
+    public async Task<List<Post>> GetUserTimelinePostsAsync(string username)
     {
         var query = @$"MATCH (u:user {{username: '{username}'}})-[:follow]->(followed)
                         MATCH (p:post)-[:belongs_to]->(followed)
@@ -70,7 +71,55 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
                                 
         var result = await _queryExecutor.ExecuteAsync(query);
         
-        var posts = GenericNebulaDataConverter.ConvertToEntityList<Dto.Post>(result);
+        var posts = GenericNebulaDataConverter.ConvertToEntityList<Post>(result);
         return posts;
+    }
+    
+    public async Task<List<Following>> GetUserFollowingsAsync(string username)
+    {
+        var query = @$"MATCH (u:user {{username: '{username}'}})-[f:follow]->(followed) 
+                        RETURN 
+                            CASE 
+                                WHEN 'channel' IN tags(followed) THEN 'Channel'
+                                WHEN 'user' IN tags(followed) THEN 'User'
+                            END AS Type,  
+
+                            CASE 
+                                WHEN 'channel' IN tags(followed) THEN followed.channel.channelId
+                                WHEN 'user' IN tags(followed) THEN followed.user.username
+                            END AS IssuerId,  
+
+                            CASE 
+                                WHEN 'channel' IN tags(followed) THEN followed.channel.profilePictureId
+                                WHEN 'user' IN tags(followed) THEN followed.user.profilePictureId
+                            END AS ProfilePictureId,  
+
+                            CASE 
+                                WHEN 'channel' IN tags(followed) THEN followed.channel.title
+                                WHEN 'user' IN tags(followed) THEN followed.user.fullname
+                            END AS Title,
+                            f.followDateTime AS FollowDate;
+                    ";
+                                
+        var result = await _queryExecutor.ExecuteAsync(query);
+        
+        var feed = GenericNebulaDataConverter2.ConvertToEntityList<Following>(result);
+        return feed;
+    }    
+    
+    public async Task<List<Follower>> GetUserFollowersAsync(string username)
+    {
+        var query = @$"MATCH (follower:user)-[f:follow]->(u:user {{username: '{username}'}}) 
+                        RETURN 
+                        follower.user.username AS Username,  
+                        follower.user.profilePictureId AS ProfilePictureId,  
+                        follower.user.fullname AS Fullname,
+                        f.followDateTime AS FollowDate;
+                    ";
+                                
+        var result = await _queryExecutor.ExecuteAsync(query);
+        
+        var feed = GenericNebulaDataConverter2.ConvertToEntityList<Follower>(result);
+        return feed;
     }
 }

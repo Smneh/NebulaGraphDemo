@@ -33,12 +33,12 @@ class Program
             _channelRepository = new ChannelRepository(sessionManager);
             _channelUserPostRelationRepository = new ChannelUserPostRelationRepository(sessionManager);
 
-            // await CreateSchema();
-            // await Task.Delay(10000); // 10 seconds
+            //await CreateSchema();
+            //await Task.Delay(10000); // 10 seconds
             //
-            // var (username1, username2) = await UsersSection();
+            //var (username1, username2) = await UsersSection();
             // var (uuid1, uuid2) = await PostsSection();
-            var (channelId1, channelId2) = await ChannelsSection();
+            // var (channelId1, channelId2) = await ChannelsSection();
             //
             // await RegisterFollowRelationSection(username1, channelId1);
             // await RegisterFollowRelationSection(username1, channelId2);
@@ -64,8 +64,10 @@ class Program
             //
             // await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
             // await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
-
-            await GetChannelsFullDataSection();
+            //
+            // await GetChannelsFullDataSection();
+            // await GetFollowDataFullDataSection(username1);
+            // await GetFollowDataFullDataSection(username2);
         }
         catch (Exception ex)
         {
@@ -199,6 +201,23 @@ class Program
             {
                 Console.WriteLine($"Username: {admin.Username}, Fullname: {admin.Fullname}, ProfilePictureId: {admin.ProfilePictureId}");
             }
+        }
+    }
+    
+    private static async Task GetFollowDataFullDataSection(string username)
+    {
+        var followings = await _channelUserPostRelationRepository.GetUserFollowingsAsync(username);
+        Console.WriteLine($"Followings of {username}:");
+        foreach (var f in followings)
+        {
+            Console.WriteLine($"IssuerId: {f.IssuerId}, Title: {f.Title}, ProfilePictureId: {f.ProfilePictureId}, Type: {f.Type}, FollowDate; {f.FollowDate}");
+        }
+        
+        var followers = await _channelUserPostRelationRepository.GetUserFollowersAsync(username);
+        Console.WriteLine($"Followers of {username}:");
+        foreach (var f in followers)
+        {
+            Console.WriteLine($"Username: {f.Username}, Fullname: {f.Fullname}, ProfilePictureId: {f.ProfilePictureId}, FollowDate; {f.FollowDate}");
         }
     }
 
