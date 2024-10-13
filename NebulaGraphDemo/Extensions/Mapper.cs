@@ -5,7 +5,7 @@ namespace NebulaGraphDemo.Extensions;
 
 public static class Mapper
 {
-    public static Dto.Post ToDto(this Models.Post post)
+    public static Dto.Post ToDto(this Post post)
     {
         return new Dto.Post
         {
@@ -39,9 +39,9 @@ public static class Mapper
         };
     }
 
-    public static Models.Post ToEntity(this Dto.Post post)
+    public static Post ToEntity(this Dto.Post post)
     {
-        var postEntity = new Models.Post
+        var postEntity = new Post
         {
             IssuerId = post.IssuerId,
             IssuerType = post.IssuerType,
@@ -72,11 +72,11 @@ public static class Mapper
             Attachments = JsonConvert.DeserializeObject<List<Attachment>>(post.Attachments)
         };
         return postEntity;
-    } 
+    }
     
-    public static Models.Comment ToEntity(this Dto.Comment comment)
+    public static Comment ToEntity(this Dto.Comment comment)
     {
-        var commentEntity = new Models.Comment
+        var commentEntity = new Comment
         {
             Content = comment.Content,
             ContentTypeId = comment.ContentTypeId,

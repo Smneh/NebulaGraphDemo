@@ -12,6 +12,8 @@ class Program
     private static UserPostRelationRepository _userPostRelationRepository;
     private static CommentRepository _commentRepository;
     private static PostUserCommentRelationRepository _postUserCommentRelationRepository;
+    private static ChannelRepository _channelRepository;
+    private static ChannelUserPostRelationRepository _channelUserPostRelationRepository;
 
     static async Task Main(string[] args)
     {
@@ -28,22 +30,42 @@ class Program
             _userPostRelationRepository = new UserPostRelationRepository(sessionManager);
             _commentRepository = new CommentRepository(sessionManager);
             _postUserCommentRelationRepository = new PostUserCommentRelationRepository(sessionManager);
+            _channelRepository = new ChannelRepository(sessionManager);
+            _channelUserPostRelationRepository = new ChannelUserPostRelationRepository(sessionManager);
 
-            await CreateSchema();
-            await Task.Delay(10000); // 10 seconds
+            // await CreateSchema();
+            // await Task.Delay(10000); // 10 seconds
+            //
+            // var (username1, username2) = await UsersSection();
+            // var (uuid1, uuid2) = await PostsSection();
+            var (channelId1, channelId2) = await ChannelsSection();
+            //
+            // await RegisterFollowRelationSection(username1, channelId1);
+            // await RegisterFollowRelationSection(username1, channelId2);
+            // await RegisterFollowRelationSection(username2, channelId1);
+            // await RegisterFollowRelationSection(username2, channelId2);
+            // await RegisterFollowRelationSection(username1, username2);
+            // await RegisterFollowRelationSection(username2, username1);
+            //
+            // await RegisterPostRelationSection(username1, uuid1);
+            // await RegisterPostRelationSection(username2, uuid2);
+            //
+            // await PostUserChannelRelationSection(username1, uuid1);
+            // await PostUserChannelRelationSection(channelId1, uuid2);
+            //
+            // await UserChannelRelationSection(username2, channelId1);
+            // await UserChannelRelationSection(username1, channelId2);
+            //
+            // await GetPostsSection(username1, channelId1, username2, channelId2);
+            // var (cmUuid1, cmUuid2) = await CommentSection();
+            //
+            // await RegisterUserPostCommentRelationSection(username1, uuid1, cmUuid1);
+            // await RegisterUserPostCommentRelationSection(username2, uuid2, cmUuid2);
+            //
+            // await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
+            // await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
 
-            var (username1, username2) = await UsersSection();
-            var (uuid1, uuid2) = await PostsSection();
-
-            await RegisterPostRelationSection(username1, uuid1);
-            await RegisterPostRelationSection(username2, uuid2);
-            var (cmUuid1, cmUuid2) = await CommentSection();
-
-            await RegisterUserPostCommentRelationSection(username1, uuid1, cmUuid1);
-            await RegisterUserPostCommentRelationSection(username2, uuid2, cmUuid2);
-
-            await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
-            await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
+            await GetChannelsFullDataSection();
         }
         catch (Exception ex)
         {
@@ -57,7 +79,10 @@ class Program
         await _userRepository.CreateIndexForUserAsync();
         
         await _postRepository.CreatePostTagAsync();
-        await _postRepository.CreateIndexForPostAsync();
+        await _postRepository.CreateIndexForPostAsync();        
+        
+        await _channelRepository.CreateChannelTagAsync();
+        await _channelRepository.CreateIndexForChannelAsync();
         
         await _userPostRelationRepository.CreateRegisterEdgeAsync();
         await _userPostRelationRepository.CreateLikeEdgeAsync();
@@ -69,6 +94,9 @@ class Program
         
         //await _postUserCommentRelationRepository.CreateCommentEdgeAsync();
         await _postUserCommentRelationRepository.CreateBelongsToEdgeAsync();
+
+        await _channelUserPostRelationRepository.CreateFollowEdgeAsync();
+        await _channelUserPostRelationRepository.CreateAdminOfEdgeAsync();
     }
 
     private static async Task<(string, string)> UsersSection()
@@ -120,6 +148,58 @@ class Program
         }
 
         return (uuid1, uuid2);
+    }
+
+    private static async Task<(string, string)> ChannelsSection()
+    {
+        var (channelId1, channelId2) = await CreateChannels();
+
+        var channel = await _channelRepository.GetChannelAsync(channelId1);
+        if (channel != null)
+        {
+            Console.WriteLine($"Retrieved Channel ChannelId: {channel.ChannelId}, Title: {channel.Title}");
+            
+            var admins = await _channelRepository.GetChannelAdminsAsync(channel.ChannelId);
+            Console.WriteLine("All admins:");
+            foreach (var admin in admins)
+            {
+                Console.WriteLine($"Username: {admin.Username}, Fullname: {admin.Fullname}, ProfilePictureId: {admin.ProfilePictureId}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Channel not found.");
+        }
+        
+        var channels = await _channelRepository.GetAllChannelsAsync();
+        Console.WriteLine("All Channels:");
+        foreach (var ch in channels)
+        {
+            Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}");
+            var admins = await _channelRepository.GetChannelAdminsAsync(ch.ChannelId);
+            Console.WriteLine("All admins:");
+            foreach (var admin in admins)
+            {
+                Console.WriteLine($"Username: {admin.Username}, Fullname: {admin.Fullname}, ProfilePictureId: {admin.ProfilePictureId}");
+            }
+        }
+
+        return (channelId1, channelId2);
+    }
+    
+    private static async Task GetChannelsFullDataSection()
+    {
+        var channels = await _channelRepository.GetAllChannelsFullDataAsync();
+        Console.WriteLine("All Channels:");
+        foreach (var ch in channels)
+        {
+            Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}");
+            Console.WriteLine("All admins:");
+            foreach (var admin in ch.Admins)
+            {
+                Console.WriteLine($"Username: {admin.Username}, Fullname: {admin.Fullname}, ProfilePictureId: {admin.ProfilePictureId}");
+            }
+        }
     }
 
     private static async Task<(string, string)> CreateUsers()
@@ -290,6 +370,128 @@ class Program
         return (post1.Uuid, post2.Uuid);
     }
 
+    private static async Task<(string, string)> CreateChannels()
+    {
+        var channel1 = new Channel
+        {
+            Uuid = Guid.NewGuid().ToString(),
+            ChannelId = "FirstChannel",
+            Title = "My First Channel",
+            Creator = "smneh",
+            Description = "no description",
+            PrivacyTypeId = 1,
+            TypeId = 1,
+            RegDate = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            RegTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            RegDateTime = DateTime.Now,
+            LastUpdateDate = DateTime.Now,
+            ProfilePictureId = "pic1",
+            WallpaperPictureId = "wall1",
+            CopyStatus = true,
+            CommentStatus = true,
+            PinnedPostId = 0,
+            PostCount = 0,
+            IsPinned = true
+        };
+
+        var channel2 = new Channel
+        {
+            Uuid = Guid.NewGuid().ToString(),
+            ChannelId = "SecondChannel",
+            Title = "My Second Channel",
+            Creator = "hamid",
+            Description = "nothing",
+            PrivacyTypeId = 2,
+            TypeId = 1,
+            RegDate = 0,
+            RegTime = 0,
+            RegDateTime = DateTime.Now,
+            LastUpdateDate = DateTime.Now,
+            ProfilePictureId = "pic2",
+            WallpaperPictureId = "wall2",
+            CopyStatus = true,
+            CommentStatus = true,
+            PinnedPostId = 0,
+            PostCount = 0,
+            IsPinned = false
+        };
+
+        await _channelRepository.CreateChannelAsync(channel1);
+
+        await _channelRepository.CreateChannelAsync(channel2);
+
+        return (channel1.ChannelId, channel2.ChannelId);
+    }
+
+    private static async Task RegisterFollowRelationSection(string username, string issuerId)
+    {
+        await _channelUserPostRelationRepository.AddPostFollowEdgeAsync(username, issuerId);
+    }    
+    
+    private static async Task PostUserChannelRelationSection(string issuerId, string uuid)
+    {
+        await _channelUserPostRelationRepository.AddPostBelongsToEdgeAsync(uuid, issuerId);
+    }   
+    
+    private static async Task UserChannelRelationSection(string username, string issuerId)
+    {
+        await _channelUserPostRelationRepository.AddUserAdminOfChannelEdgeAsync(username, issuerId);
+    }   
+    
+    private static async Task GetPostsSection(string username1, string channelId1, string username2, string channelId2)
+    {
+        var user1Posts = await _channelUserPostRelationRepository.GetUserPostsAsync(username1);
+        var user2Posts = await _channelUserPostRelationRepository.GetUserPostsAsync(username2);
+
+        Console.WriteLine($"Posts That Belongs To {username1}");
+        foreach (var p in user1Posts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+        
+        Console.WriteLine($"Posts That Belongs To {username2}");
+        foreach (var p in user2Posts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+        
+        var channel1Posts = await _channelUserPostRelationRepository.GetChannelPostsAsync(channelId1);
+        var channel2Posts = await _channelUserPostRelationRepository.GetChannelPostsAsync(channelId2);
+        
+        Console.WriteLine($"Posts That Belongs To {channelId1}");
+        foreach (var p in channel1Posts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+        
+        Console.WriteLine($"Posts That Belongs To {channelId2}");
+        foreach (var p in channel2Posts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+        
+        var user1TimelinePosts = await _channelUserPostRelationRepository.GetUserTimelinePostsAsync(username1);
+        var user2TimelinePosts = await _channelUserPostRelationRepository.GetUserTimelinePostsAsync(username2);
+
+        Console.WriteLine($"Timeline Of {username1}");
+        foreach (var p in user1TimelinePosts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+        
+        Console.WriteLine($"Timeline Of {username2}");
+        foreach (var p in user2TimelinePosts)
+        {
+            var postEntity = p.ToEntity();
+            Console.WriteLine($"IssuerId: {postEntity.IssuerId}, Content: {postEntity.Content}");
+        }
+    }
+    
     private static async Task RegisterPostRelationSection(string username, string uuid)
     {
         await _userPostRelationRepository.AddPostRegisterEdgeAsync(username, uuid);
@@ -297,7 +499,7 @@ class Program
         await _userPostRelationRepository.AddPostLikeEdgeAsync(username, uuid);
 
         await _userPostRelationRepository.AddPostVisitEdgeAsync(username, uuid);
-
+        
         // var comment1 = new Comment
         // {
         //     Content = $"cm1 {username}",
@@ -398,7 +600,7 @@ class Program
 
     private static async Task<(string, string)> CreateComments()
     {
-        var comment1 = new Models.Comment
+        var comment1 = new Comment
         {
             Content = $"cm1",
             ContentTypeId = 1,
@@ -411,7 +613,7 @@ class Program
             CommentContentUuid = Guid.NewGuid().ToString(),
         };
 
-        var comment2 = new Models.Comment
+        var comment2 = new Comment
         {
             Content = $"cm2",
             ContentTypeId = 1,

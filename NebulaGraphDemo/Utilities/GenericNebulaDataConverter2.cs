@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 using System.Text;
 using Nebula.Common;
@@ -12,12 +13,12 @@ public static class GenericNebulaDataConverter2
         var entities = new List<T>();
         var columns = new Dictionary<int, string>();
 
-        for (int i = 0 ; i < dataSet.Column_names.Count ; i++ )
+        for (int i = 0; i < dataSet.Column_names.Count; i++)
         {
-           var columnName = (DecodeAsciiValues(dataSet.Column_names[i]));  
-           columns.Add(i, columnName);
+            var columnName = (DecodeAsciiValues(dataSet.Column_names[i]));
+            columns.Add(i, columnName);
         }
-        
+
         foreach (var row in dataSet.Rows)
         {
             var entity = ConvertToEntity<T>(row, columns);
@@ -34,18 +35,18 @@ public static class GenericNebulaDataConverter2
     {
         var entity = new T();
         var properties = typeof(T).GetProperties();
-        
+
         var fullname = typeof(T).ToString();
         var name = fullname.Split('.').Last().ToLower();
-        
-        for (var i = 0; i < row.Values.Count ; i++)
+
+        for (var i = 0; i < row.Values.Count; i++)
         {
             var value = row.Values[i];
             if (value.VVal is Vertex vertex)
             {
                 foreach (var tag in vertex.Tags)
                 {
-                    if (ByteArrayEquals(tag.Name, Encoding.ASCII.GetBytes(name))) 
+                    if (ByteArrayEquals(tag.Name, Encoding.ASCII.GetBytes(name)))
                     {
                         foreach (var prop in properties)
                         {
@@ -60,6 +61,7 @@ public static class GenericNebulaDataConverter2
                     }
                 }
             }
+
             if (value.EVal is Edge edge)
             {
                 if (ByteArrayEquals(edge.Name, Encoding.ASCII.GetBytes(name)))
@@ -73,7 +75,7 @@ public static class GenericNebulaDataConverter2
                         {
                             SetPropertyValue(entity, prop, matchingProp.Value);
                         }
-                    }   
+                    }
                 }
             }
             else
@@ -121,11 +123,112 @@ public static class GenericNebulaDataConverter2
         else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
         {
             convertedValue = GetValueAsBool(value);
-        }  
+        }
         else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
         {
             convertedValue = GetValueAsDateTime(value);
-        }       
+        }
+        else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            var listType = prop.PropertyType;
+            var elementType = listType.GenericTypeArguments[0];
+
+            var listInstance = (IList)Activator.CreateInstance(listType);
+
+            foreach (var item in value.LVal.Values)
+            {
+                var map = item.MVal;
+                var kvs = map.Kvs;
+                var elementInstance = Activator.CreateInstance(elementType);
+
+                foreach (var elementProp in elementType.GetProperties())
+                {
+                    var propName = LowerFirstLetter(elementProp.Name);
+                    var propNameBytes = Encoding.ASCII.GetBytes(propName);
+                    var matchingProp = kvs.FirstOrDefault(p => ByteArrayEquals(p.Key, propNameBytes));
+                    if (matchingProp.Key != null)
+                    {
+                        SetPropertyValue(elementInstance, elementProp, matchingProp.Value);
+                    }
+                }
+
+                listInstance.Add(elementInstance);
+            }
+
+            convertedValue = listInstance;
+        }
+        else
+        {
+            throw new NotSupportedException($"Unsupported property type: {prop.PropertyType}");
+        }
+
+        prop.SetValue(entity, convertedValue);
+    }
+
+    private static void SetPropertyValue<T>(T entity, PropertyInfo prop, object value)
+    {
+        object convertedValue;
+
+        if (value == null)
+        {
+            convertedValue = null;
+        }
+        else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
+        {
+            convertedValue = Convert.ToInt32(value);
+        }
+        else if (prop.PropertyType == typeof(long) || prop.PropertyType == typeof(long?))
+        {
+            convertedValue = Convert.ToInt64(value);
+        }
+        else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
+        {
+            convertedValue = Convert.ToDouble(value);
+        }
+        else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
+        {
+            convertedValue = Convert.ToDecimal(value);
+        }
+        else if (prop.PropertyType == typeof(string))
+        {
+            convertedValue = value.ToString();
+        }
+        else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
+        {
+            convertedValue = Convert.ToBoolean(value);
+        }
+        else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
+        {
+            convertedValue = Convert.ToDateTime(value);
+        }
+        else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            // Handle generic List<>
+            var listType = prop.PropertyType;
+            var elementType = listType.GenericTypeArguments[0];
+            var listInstance = (IList)Activator.CreateInstance(listType);
+
+            foreach (var item in value as IEnumerable)
+            {
+                var elementInstance = Activator.CreateInstance(elementType);
+
+                foreach (var elementProp in elementType.GetProperties())
+                {
+                    var itemProp = item.GetType().GetProperty(elementProp.Name);
+                    if (itemProp != null)
+                    {
+                        var itemValue = itemProp.GetValue(item);
+
+                        // Recursive call to set properties using the object overload
+                        SetPropertyValue(elementInstance, elementProp, itemValue);
+                    }
+                }
+
+                listInstance.Add(elementInstance);
+            }
+
+            convertedValue = listInstance;
+        }
         else
         {
             throw new NotSupportedException($"Unsupported property type: {prop.PropertyType}");
@@ -155,14 +258,15 @@ public static class GenericNebulaDataConverter2
                 return Encoding.ASCII.GetString(byteArray);
             }
         }
+
         return null;
     }
 
     private static bool GetValueAsBool(Value value)
     {
         return Convert.ToBoolean(value.GetType().GetProperty("BVal")?.GetValue(value));
-    }  
-    
+    }
+
     private static DateTime GetValueAsDateTime(Value value)
     {
         var nebulaDateTime = value.GetType().GetProperty("DtVal")?.GetValue(value) as Nebula.Common.DateTime;
@@ -176,16 +280,16 @@ public static class GenericNebulaDataConverter2
             var minute = nebulaDateTime.Minute;
             var second = nebulaDateTime.Sec;
             var microsecond = nebulaDateTime.Microsec;
-            
+
             var dateTime = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc)
-                .AddTicks(microsecond * 10); 
+                .AddTicks(microsecond * 10);
 
             return dateTime;
         }
 
         throw new InvalidCastException($"Unable to cast value : {nebulaDateTime} to Nebula.Common.DateTime.");
     }
-    
+
     private static bool ByteArrayEquals(byte[] a1, byte[] a2)
     {
         if (a1 == null || a2 == null || a1.Length != a2.Length)
@@ -195,7 +299,7 @@ public static class GenericNebulaDataConverter2
                 return false;
         return true;
     }
-    
+
     static string DecodeAsciiValues(byte[] asciiValues)
     {
         StringBuilder stringBuilder = new StringBuilder();

@@ -86,12 +86,12 @@ public class UserPostRelationRepository(NebulaSessionManager sessionManager)
         return users;
     }
 
-    public async Task<List<NebulaGraphDemo.Dto.Post>> GetPostsRegisteredByUserAsync(string username)
+    public async Task<List<Dto.Post>> GetPostsRegisteredByUserAsync(string username)
     {
         var query = $"MATCH (u:user {{Username: '{username}'}})-[:register]->(p:post) RETURN p;";
         var result = await _queryExecutor.ExecuteAsync(query);
         
-        var posts = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Post>(result);
+        var posts = GenericNebulaDataConverter.ConvertToEntityList<Dto.Post>(result);
         return posts;
     }
 
