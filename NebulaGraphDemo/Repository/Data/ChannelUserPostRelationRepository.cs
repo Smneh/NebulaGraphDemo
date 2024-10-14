@@ -45,6 +45,13 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
         await _queryExecutor.ExecuteAsync(query);
     }
     
+    public async Task RemoveUserAdminOfChannelEdgeAsync(string username, string issuerId)
+    {
+        var query = $"DELETE EDGE admin_of '{username}'->'{issuerId}';";
+
+        await _queryExecutor.ExecuteAsync(query);
+    }
+    
     public async Task<List<Post>> GetChannelPostsAsync(string channelId)
     {
         var query = $"MATCH (p:post)-[:belongs_to]->(ch:channel {{channelId: '{channelId}'}}) RETURN p;";

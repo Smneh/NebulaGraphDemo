@@ -38,7 +38,7 @@ class Program
             //
             var (username1, username2) = await UsersSection();
             // var (uuid1, uuid2) = await PostsSection();
-            // var (channelId1, channelId2) = await ChannelsSection();
+            var (channelId1, channelId2) = await ChannelsSection();
             //
             // await RegisterFollowRelationSection(username1, channelId1);
             // await RegisterFollowRelationSection(username1, channelId2);
@@ -75,6 +75,7 @@ class Program
             // await SearchChannels("test", username1,10);
             // await UpdateUserData(username1);
             // await UpdateUserData(username2);
+            await RemoveAdmin(username1, channelId1);
         }
         catch (Exception ex)
         {
@@ -241,6 +242,11 @@ class Program
             ProfilePictureId = "new picture",
         };
         await _userRepository.UpdateUserAsync(newUser);
+    }
+    
+    private static async Task RemoveAdmin(string username, string issuerId)
+    {
+        await _channelUserPostRelationRepository.RemoveUserAdminOfChannelEdgeAsync(username, issuerId);
     }
     
     private static async Task GetFollowDataFullDataSection(string username)
