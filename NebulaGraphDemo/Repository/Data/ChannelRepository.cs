@@ -96,7 +96,7 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         return channels;
     }
 
-    public async Task<List<Dto.TopChannels>> GetTopChannels(int limit)
+    public async Task<List<Dto.TopChannels>> GetTopChannelsAsync(int limit)
     {
         var query = $@"MATCH (ch:channel)<-[f:follow]-() 
                         RETURN 

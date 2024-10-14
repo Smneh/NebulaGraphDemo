@@ -33,49 +33,49 @@ class Program
             _channelRepository = new ChannelRepository(sessionManager);
             _channelUserPostRelationRepository = new ChannelUserPostRelationRepository(sessionManager);
 
-            //await CreateSchema();
-            //await Task.Delay(10000); // 10 seconds
-            //
+            await CreateSchema();
+            await Task.Delay(10000); // 10 seconds
+            
             var (username1, username2) = await UsersSection();
-            // var (uuid1, uuid2) = await PostsSection();
+            var (uuid1, uuid2) = await PostsSection();
             var (channelId1, channelId2) = await ChannelsSection();
-            //
-            // await RegisterFollowRelationSection(username1, channelId1);
-            // await RegisterFollowRelationSection(username1, channelId2);
-            // await RegisterFollowRelationSection(username2, channelId1);
-            // await RegisterFollowRelationSection(username2, channelId2);
-            // await RegisterFollowRelationSection(username1, username2);
-            // await RegisterFollowRelationSection(username2, username1);
-            //
-            // await RegisterPostRelationSection(username1, uuid1);
-            // await RegisterPostRelationSection(username2, uuid2);
-            //
-            // await PostUserChannelRelationSection(username1, uuid1);
-            // await PostUserChannelRelationSection(channelId1, uuid2);
-            //
-            // await UserChannelRelationSection(username2, channelId1);
-            // await UserChannelRelationSection(username1, channelId2);
-            //
-            // await GetPostsSection(username1, channelId1, username2, channelId2);
-            // var (cmUuid1, cmUuid2) = await CommentSection();
-            //
-            // await RegisterUserPostCommentRelationSection(username1, uuid1, cmUuid1);
-            // await RegisterUserPostCommentRelationSection(username2, uuid2, cmUuid2);
-            //
-            // await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
-            // await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
-            //
-            // await GetChannelsFullDataSection();
-            // await GetFollowDataFullDataSection(username1);
-            // await GetFollowDataFullDataSection(username2);
-            // await GetTopChannels(5);
-            // await SearchChannels("channel", username1,10);
-            // await SearchChannels("first", username1,10);
-            // await SearchChannels("First", username1,10);
-            // await SearchChannels("test", username1,10);
-            // await UpdateUserData(username1);
-            // await UpdateUserData(username2);
-            // await RemoveAdmin(username1, channelId1);
+            
+            await RegisterFollowRelationSection(username1, channelId1);
+            await RegisterFollowRelationSection(username1, channelId2);
+            await RegisterFollowRelationSection(username2, channelId1);
+            await RegisterFollowRelationSection(username2, channelId2);
+            await RegisterFollowRelationSection(username1, username2);
+            await RegisterFollowRelationSection(username2, username1);
+            
+            await RegisterPostRelationSection(username1, uuid1);
+            await RegisterPostRelationSection(username2, uuid2);
+            
+            await PostUserChannelRelationSection(username1, uuid1);
+            await PostUserChannelRelationSection(channelId1, uuid2);
+            
+            await UserChannelRelationSection(username2, channelId1);
+            await UserChannelRelationSection(username1, channelId2);
+            
+            await GetPostsSection(username1, channelId1, username2, channelId2);
+            var (cmUuid1, cmUuid2) = await CommentSection();
+            
+            await RegisterUserPostCommentRelationSection(username1, uuid1, cmUuid1);
+            await RegisterUserPostCommentRelationSection(username2, uuid2, cmUuid2);
+            
+            await RegisterUserLikeCommentRelationSection(username1, cmUuid2);
+            await RegisterUserLikeCommentRelationSection(username2, cmUuid1);
+            
+            await GetChannelsFullDataSection();
+            await GetFollowDataFullDataSection(username1);
+            await GetFollowDataFullDataSection(username2);
+            await GetTopChannels(5);
+            await SearchChannels("channel", username1,10);
+            await SearchChannels("first", username1,10);
+            await SearchChannels("First", username1,10);
+            await SearchChannels("test", username1,10);
+            await UpdateUserData(username1);
+            await UpdateUserData(username2);
+            await RemoveAdmin(username1, channelId1);
         }
         catch (Exception ex)
         {
@@ -214,7 +214,7 @@ class Program
     
     private static async Task GetTopChannels(int limit)
     {
-        var channels = await _channelRepository.GetTopChannels(limit);
+        var channels = await _channelRepository.GetTopChannelsAsync(limit);
         Console.WriteLine("Top Channels:");
         foreach (var ch in channels)
         {
