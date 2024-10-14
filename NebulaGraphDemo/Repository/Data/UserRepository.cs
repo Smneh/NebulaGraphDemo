@@ -63,7 +63,19 @@ public class UserRepository(NebulaSessionManager sessionManager)
         var result = await _queryExecutor.ExecuteAsync(query);
         Console.WriteLine($"user created: {user.Fullname}, Result: {result}");
     }
+    
+    public async Task UpdateUserAsync(User user)
+    {
+        var query = $@"UPDATE VERTEX ON user '{user.Username}' 
+                        SET fullname = '{user.Fullname}', 
+                            profilePictureId = '{user.ProfilePictureId}', 
+                            lastModifyDate = {user.LastModifyDate}
+                            ;";
 
+        var result = await _queryExecutor.ExecuteAsync(query);
+        Console.WriteLine($"User updated: {user.Username}, Result: {result}");
+    }
+    
     public async Task<User?> GetUserAsync(string username)
     {
         var query = $"MATCH (u:user{{username:'{username}'}}) RETURN u";

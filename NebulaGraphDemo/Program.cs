@@ -69,10 +69,12 @@ class Program
             // await GetFollowDataFullDataSection(username1);
             // await GetFollowDataFullDataSection(username2);
             // await GetTopChannels(5);
-            await SearchChannels("channel", username1,10);
-            await SearchChannels("first", username1,10);
-            await SearchChannels("First", username1,10);
-            await SearchChannels("test", username1,10);
+            // await SearchChannels("channel", username1,10);
+            // await SearchChannels("first", username1,10);
+            // await SearchChannels("First", username1,10);
+            // await SearchChannels("test", username1,10);
+            // await UpdateUserData(username1);
+            // await UpdateUserData(username2);
         }
         catch (Exception ex)
         {
@@ -227,6 +229,18 @@ class Program
         {
             Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}, ProfilePictureId: {ch.ProfilePictureId}, IsFollowing: {ch.IsFollowing}");
         }
+    }
+    
+    private static async Task UpdateUserData(string username)
+    {
+        var newUser = new User
+        {
+            Username = username,
+            Fullname = username + " updated",
+            LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ProfilePictureId = "new picture",
+        };
+        await _userRepository.UpdateUserAsync(newUser);
     }
     
     private static async Task GetFollowDataFullDataSection(string username)
