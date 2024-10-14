@@ -20,4 +20,5 @@ public class Channel
     public long PinnedPostId { get; set; }
     public int PostCount { get; set; }
     public bool IsPinned { get; set; } = default;
+    public bool IsFollowing { get; set; } = default;
 }

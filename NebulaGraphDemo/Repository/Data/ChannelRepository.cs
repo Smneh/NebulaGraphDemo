@@ -115,6 +115,31 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         return channels;
     }
 
+
+    public async Task<List<Channel>> SearchChannels(string searchText, string username, int limit)
+    {
+        var query = $@"MATCH (ch:channel) 
+                        WHERE toLower(ch.channel.channelId) CONTAINS toLower('{searchText}') 
+                        OR toLower(ch.channel.title) CONTAINS toLower('{searchText}')
+                        OPTIONAL MATCH (u:user {{username: '{username}'}})-[:follow]->(ch) 
+                        RETURN 
+                        ch.channel.channelId as ChannelId,
+                        ch.channel.title as Title,
+                        ch.channel.profilePictureId as ProfilePictureId,
+                        CASE 
+                                WHEN u IS NOT NULL THEN true 
+                                ELSE false 
+                        END AS IsFollowing
+                        LIMIT {limit};"; 
+        
+        var result = await _queryExecutor.ExecuteAsync(query);
+        var channels = new List<Channel>();
+            
+        channels = GenericNebulaDataConverter2.ConvertToEntityList<Channel>(result);
+
+        return channels;
+    }
+
     public async Task<List<Dto.Admin>> GetChannelAdminsAsync(string channelId)
     {
         var query = @$"MATCH (admin:user)-[:admin_of]->(ch:channel {{channelId:'{channelId}'}}) 

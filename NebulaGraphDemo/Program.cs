@@ -38,14 +38,14 @@ class Program
             //
             var (username1, username2) = await UsersSection();
             // var (uuid1, uuid2) = await PostsSection();
-            var (channelId1, channelId2) = await ChannelsSection();
+            // var (channelId1, channelId2) = await ChannelsSection();
             //
-            await RegisterFollowRelationSection(username1, channelId1);
-            await RegisterFollowRelationSection(username1, channelId2);
-            await RegisterFollowRelationSection(username2, channelId1);
-            await RegisterFollowRelationSection(username2, channelId2);
-            await RegisterFollowRelationSection(username1, username2);
-            await RegisterFollowRelationSection(username2, username1);
+            // await RegisterFollowRelationSection(username1, channelId1);
+            // await RegisterFollowRelationSection(username1, channelId2);
+            // await RegisterFollowRelationSection(username2, channelId1);
+            // await RegisterFollowRelationSection(username2, channelId2);
+            // await RegisterFollowRelationSection(username1, username2);
+            // await RegisterFollowRelationSection(username2, username1);
             //
             // await RegisterPostRelationSection(username1, uuid1);
             // await RegisterPostRelationSection(username2, uuid2);
@@ -68,7 +68,11 @@ class Program
             // await GetChannelsFullDataSection();
             // await GetFollowDataFullDataSection(username1);
             // await GetFollowDataFullDataSection(username2);
-            await GetTopChannels(5);
+            // await GetTopChannels(5);
+            await SearchChannels("channel", username1,10);
+            await SearchChannels("first", username1,10);
+            await SearchChannels("First", username1,10);
+            await SearchChannels("test", username1,10);
         }
         catch (Exception ex)
         {
@@ -205,7 +209,6 @@ class Program
         }
     }
     
-    
     private static async Task GetTopChannels(int limit)
     {
         var channels = await _channelRepository.GetTopChannels(limit);
@@ -213,6 +216,16 @@ class Program
         foreach (var ch in channels)
         {
             Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}, ProfilePictureId: {ch.ProfilePictureId}, FollowersCount: {ch.FollowerCount}");
+        }
+    }
+    
+    private static async Task SearchChannels(string searchText, string username, int limit)
+    {
+        var channels = await _channelRepository.SearchChannels(searchText, username, limit);
+        Console.WriteLine($"Search Channels with searchText = {searchText} Response:");
+        foreach (var ch in channels)
+        {
+            Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}, ProfilePictureId: {ch.ProfilePictureId}, IsFollowing: {ch.IsFollowing}");
         }
     }
     
@@ -237,10 +250,10 @@ class Program
     {
         var user1 = new User
         {
-            Username = "smneh3",
+            Username = "smneh",
             WorkspaceTitle = "Development",
             WorkspaceId = 1,
-            Fullname = "smneh am3",
+            Fullname = "smneh am",
             FatherName = "",
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,
@@ -262,10 +275,10 @@ class Program
 
         var user2 = new User
         {
-            Username = "hamid3",
+            Username = "hamid",
             WorkspaceTitle = "Design",
             WorkspaceId = 2,
-            Fullname = "hamid b3",
+            Fullname = "hamid b",
             FatherName = null,
             LastModifyDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsMale = true,
