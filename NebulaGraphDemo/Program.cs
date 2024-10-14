@@ -97,12 +97,10 @@ class Program
         await _userPostRelationRepository.CreateRegisterEdgeAsync();
         await _userPostRelationRepository.CreateLikeEdgeAsync();
         await _userPostRelationRepository.CreateVisitEdgeAsync();
-        //await _userPostRelationRepository.CreateCommentEdgeAsync();
         
         await _commentRepository.CreateCommentTagAsync();
         await _commentRepository.CreateIndexForCommentAsync();
         
-        //await _postUserCommentRelationRepository.CreateCommentEdgeAsync();
         await _postUserCommentRelationRepository.CreateBelongsToEdgeAsync();
 
         await _channelUserPostRelationRepository.CreateFollowEdgeAsync();
@@ -565,49 +563,6 @@ class Program
 
         await _userPostRelationRepository.AddPostVisitEdgeAsync(username, uuid);
         
-        // var comment1 = new Comment
-        // {
-        //     Content = $"cm1 {username}",
-        //     ContentTypeId = 1,
-        //     RegDateTime = DateTime.Now,
-        //     ChildCount = 0,
-        //     Depth = 0,
-        //     Uuid = Guid.NewGuid().ToString(),
-        //     ParentUuid = "-",
-        //     ContentUuid = Guid.NewGuid().ToString(),
-        //     CommentContentUuid = Guid.NewGuid().ToString(),
-        // };
-        //
-        // var comment2 = new Comment
-        // {
-        //     Content = $"cm2 {username}",
-        //     ContentTypeId = 1,
-        //     RegDateTime = DateTime.Now,
-        //     ChildCount = 0,
-        //     Depth = 0,
-        //     Uuid = Guid.NewGuid().ToString(),
-        //     ParentUuid = "-",
-        //     ContentUuid = Guid.NewGuid().ToString(),
-        //     CommentContentUuid = Guid.NewGuid().ToString(),
-        // };        
-        //
-        // var comment3 = new Comment
-        // {
-        //     Content = $"cm3 {username}",
-        //     ContentTypeId = 1,
-        //     RegDateTime = DateTime.Now,
-        //     ChildCount = 0,
-        //     Depth = 0,
-        //     Uuid = Guid.NewGuid().ToString(),
-        //     ParentUuid = "-",
-        //     ContentUuid = Guid.NewGuid().ToString(),
-        //     CommentContentUuid = Guid.NewGuid().ToString(),
-        // };
-        //
-        // await _userPostRelationRepository.AddPostCommentEdgeAsync(username, uuid, comment1);
-        // await _userPostRelationRepository.AddPostCommentEdgeAsync(username, uuid, comment2);
-        // await _userPostRelationRepository.AddPostCommentEdgeAsync(username, uuid, comment3);
-
         var posts = await _userPostRelationRepository.GetPostsRegisteredByUserAsync(username);
         
         var likers = await _userPostRelationRepository.GetUsersWhoLikePostAsync(uuid);
@@ -616,8 +571,6 @@ class Program
         var visitors = await _userPostRelationRepository.GetUsersWhoVisitPostAsync(uuid);
         var postsVisitedBy = await _userPostRelationRepository.GetPostsVisitedByUserAsync(username);
         
-        //var comments = await _userPostRelationRepository.GetPostCommentsAsync(uuid);
-
         Console.WriteLine($"Posts Registered By {username}");
         foreach (var p in posts)
         {
@@ -649,11 +602,6 @@ class Program
         {
             Console.WriteLine($"IssuerId: {p.IssuerId}, Content: {p.Content}, RegDateTime: {p.RegDateTime}");
         }
-        // Console.WriteLine($"Comments of post {uuid}");
-        // foreach (var cm in comments)
-        // {
-        //     Console.WriteLine($"Content: {cm.Content}, RegUser: {cm.RegUser}, RegDateTime: {cm.RegDateTime}");
-        // }
     }
 
     private static async Task<(string, string)> CommentSection()
