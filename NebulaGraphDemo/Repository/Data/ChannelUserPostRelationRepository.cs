@@ -72,6 +72,11 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
     
     public async Task<List<Post>> GetUserTimelinePostsAsync(string username)
     {
+        // var query = @$"MATCH (u:user {{username: '{username}'}})-[:follow]->(follower)<-[:belongs_to]-(p:post)
+        //                 RETURN p
+        //                 LIMIT 10;
+        //                 ";        
+        
         var query = @$"MATCH (u:user {{username: '{username}'}})-[:follow]->(followed)
                         MATCH (p:post)-[:belongs_to]->(followed)
                         RETURN p";

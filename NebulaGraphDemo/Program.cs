@@ -75,7 +75,7 @@ class Program
             // await SearchChannels("test", username1,10);
             // await UpdateUserData(username1);
             // await UpdateUserData(username2);
-            await RemoveAdmin(username1, channelId1);
+            // await RemoveAdmin(username1, channelId1);
         }
         catch (Exception ex)
         {
@@ -221,6 +221,7 @@ class Program
             Console.WriteLine($"ChannelId: {ch.ChannelId}, Title: {ch.Title}, ProfilePictureId: {ch.ProfilePictureId}, FollowersCount: {ch.FollowerCount}");
         }
     }
+    
     
     private static async Task SearchChannels(string searchText, string username, int limit)
     {

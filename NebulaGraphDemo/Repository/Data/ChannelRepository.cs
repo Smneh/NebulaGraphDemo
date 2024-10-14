@@ -114,8 +114,7 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
 
         return channels;
     }
-
-
+    
     public async Task<List<Channel>> SearchChannels(string searchText, string username, int limit)
     {
         var query = $@"MATCH (ch:channel) 
