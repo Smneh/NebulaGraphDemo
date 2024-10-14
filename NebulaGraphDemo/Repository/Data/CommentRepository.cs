@@ -67,23 +67,23 @@ public class CommentRepository(NebulaSessionManager sessionManager)
         Console.WriteLine($"comment created: {comment.Uuid}, Result: {result}");
     }
     
-    public async Task<Comment?> GetCommentAsync(string uuid)
+    public async Task<NebulaGraphDemo.Dto.Comment?> GetCommentAsync(string uuid)
     {
         var query = $"MATCH (u:comment{{Uuid:'{uuid}'}}) RETURN u";
         var result = await _queryExecutor.ExecuteAsync(query);
 
-        var comments = GenericNebulaDataConverter.ConvertToEntityList<Comment>(result);
+        var comments = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Comment>(result);
 
         return comments.FirstOrDefault();
     }
 
-    public async Task<List<Comment>> GetAllCommentsAsync()
+    public async Task<List<NebulaGraphDemo.Dto.Comment>> GetAllCommentsAsync()
     {
         var query = "MATCH (p:comment) RETURN p";
         var result = await _queryExecutor.ExecuteAsync(query);
-        var comments = new List<Comment>();
+        var comments = new List<NebulaGraphDemo.Dto.Comment>();
 
-        comments = GenericNebulaDataConverter.ConvertToEntityList<Comment>(result);
+        comments = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Comment>(result);
 
         return comments;
     }

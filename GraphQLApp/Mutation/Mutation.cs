@@ -14,20 +14,43 @@ public class Mutation(UserRepository userRepository, PostRepository postReposito
             Username = input.Username,
             Fullname = input.Fullname,
             Email = input.Email,
-            // Set other fields from input
         };
         await userRepository.CreateUserAsync(user);
         return user;
     }
 
-    public async Task<Post> CreatePost(CreatePostInput input)
+    public async Task<PostEntity> CreatePost(CreatePostInput input)
     {
-        var post = new Post
+        var post = new PostEntity
         {
             IssuerId = input.IssuerId,
+            IssuerType = input.IssuerType,
+            RegDate = input.RegDate,
+            RegTime = input.RegTime,
+            IsShareable = input.IsShareable,
+            IsCommentable = input.IsCommentable,
+            IsPublic = input.IsPublic,
+            PostType = input.PostType,
             Content = input.Content,
+            IssuerPostId = input.IssuerPostId,
+            IsSurvey = input.IsSurvey,
+            PostTypeId = input.PostTypeId,
+            ParentIssuerType = input.ParentIssuerType,
+            SurveyId = input.SurveyId,
+            ShareCount = input.ShareCount,
+            Uuid = input.Uuid,
+            ContentUuid = input.ContentUuid,
+            ParentUuid = input.ParentUuid,
+            Edited = input.Edited,
+            EditDateTime = input.EditDateTime,
+            Attachments = input.Attachments,
             RegUser = input.RegUser,
-            // Set other fields from input
+            UniqueId = input.UniqueId,
+            RegDateTime = input.RegDateTime,
+            LikeCount = input.LikeCount,
+            CommentCount = input.CommentCount,
+            ViewCount = input.ViewCount,
+
         };
         await postRepository.CreatePostAsync(post.ToDto());
         return post;

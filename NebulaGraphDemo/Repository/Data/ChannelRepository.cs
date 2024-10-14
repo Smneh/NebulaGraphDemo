@@ -61,23 +61,23 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         Console.WriteLine($"channel created: {channel.ChannelId}, Result: {result}");
     }
 
-    public async Task<Channel?> GetChannelAsync(string channelId)
+    public async Task<NebulaGraphDemo.Dto.Channel?> GetChannelAsync(string channelId)
     {
         var query = $"MATCH (ch:channel{{channelId:'{channelId}'}}) RETURN ch";
         var result = await _queryExecutor.ExecuteAsync(query);
 
-        var channels = GenericNebulaDataConverter.ConvertToEntityList<Channel>(result);
+        var channels = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Channel>(result);
 
         return channels.FirstOrDefault();
     }
 
-    public async Task<List<Channel>> GetAllChannelsAsync()
+    public async Task<List<NebulaGraphDemo.Dto.Channel>> GetAllChannelsAsync()
     {
         var query = "MATCH (ch:channel) RETURN ch";
         var result = await _queryExecutor.ExecuteAsync(query);
-        var channels = new List<Channel>();
+        var channels = new List<NebulaGraphDemo.Dto.Channel>();
             
-        channels = GenericNebulaDataConverter.ConvertToEntityList<Channel>(result);
+        channels = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Channel>(result);
 
         return channels;
     }
@@ -115,7 +115,7 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
         return channels;
     }
     
-    public async Task<List<Channel>> SearchChannels(string searchText, string username, int limit)
+    public async Task<List<NebulaGraphDemo.Dto.Channel>> SearchChannels(string searchText, string username, int limit)
     {
         var query = $@"MATCH (ch:channel) 
                         WHERE toLower(ch.channel.channelId) CONTAINS toLower('{searchText}') 
@@ -132,9 +132,9 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
                         LIMIT {limit};"; 
         
         var result = await _queryExecutor.ExecuteAsync(query);
-        var channels = new List<Channel>();
+        var channels = new List<NebulaGraphDemo.Dto.Channel>();
             
-        channels = GenericNebulaDataConverter2.ConvertToEntityList<Channel>(result);
+        channels = GenericNebulaDataConverter2.ConvertToEntityList<NebulaGraphDemo.Dto.Channel>(result);
 
         return channels;
     }

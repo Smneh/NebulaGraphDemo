@@ -5,43 +5,43 @@ namespace NebulaGraphDemo.Extensions;
 
 public static class Mapper
 {
-    public static Dto.Post ToDto(this Post post)
+    public static Dto.Post ToDto(this PostEntity postEntity)
     {
         return new Dto.Post
         {
-            IssuerId = post.IssuerId,
-            IssuerType = post.IssuerType,
-            RegDate = post.RegDate,
-            RegTime = post.RegTime,
-            IsShareable = post.IsShareable,
-            IsCommentable = post.IsCommentable,
-            IsPublic = post.IsPublic,
-            PostType = post.PostType,
-            RegUser = post.RegUser,
-            UniqueId = post.UniqueId,
-            RegDateTime = post.RegDateTime,
-            LikeCount = post.LikeCount,
-            CommentCount = post.CommentCount,
-            ViewCount = post.ViewCount,
-            Content = post.Content,
-            Attachments = JsonConvert.SerializeObject(post.Attachments),
-            IssuerPostId = post.IssuerPostId,
-            IsSurvey = post.IsSurvey,
-            PostTypeId = post.PostTypeId,
-            ParentIssuerType = post.ParentIssuerType,
-            SurveyId = post.SurveyId,
-            ShareCount = post.ShareCount,
-            uuid = post.Uuid,
-            ContentUuid = post.ContentUuid,
-            ParentUuid = post.ParentUuid,
-            Edited = post.Edited,
-            EditDateTime = post.EditDateTime,
+            IssuerId = postEntity.IssuerId,
+            IssuerType = postEntity.IssuerType,
+            RegDate = postEntity.RegDate,
+            RegTime = postEntity.RegTime,
+            IsShareable = postEntity.IsShareable,
+            IsCommentable = postEntity.IsCommentable,
+            IsPublic = postEntity.IsPublic,
+            PostType = postEntity.PostType,
+            RegUser = postEntity.RegUser,
+            UniqueId = postEntity.UniqueId,
+            RegDateTime = postEntity.RegDateTime,
+            LikeCount = postEntity.LikeCount,
+            CommentCount = postEntity.CommentCount,
+            ViewCount = postEntity.ViewCount,
+            Content = postEntity.Content,
+            Attachments = JsonConvert.SerializeObject(postEntity.Attachments),
+            IssuerPostId = postEntity.IssuerPostId,
+            IsSurvey = postEntity.IsSurvey,
+            PostTypeId = postEntity.PostTypeId,
+            ParentIssuerType = postEntity.ParentIssuerType,
+            SurveyId = postEntity.SurveyId,
+            ShareCount = postEntity.ShareCount,
+            uuid = postEntity.Uuid,
+            ContentUuid = postEntity.ContentUuid,
+            ParentUuid = postEntity.ParentUuid,
+            Edited = postEntity.Edited,
+            EditDateTime = postEntity.EditDateTime,
         };
     }
 
-    public static Post ToEntity(this Dto.Post post)
+    public static PostEntity ToEntity(this Dto.Post post)
     {
-        var postEntity = new Post
+        var postEntity = new PostEntity
         {
             IssuerId = post.IssuerId,
             IssuerType = post.IssuerType,

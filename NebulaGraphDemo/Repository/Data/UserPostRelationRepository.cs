@@ -104,12 +104,12 @@ public class UserPostRelationRepository(NebulaSessionManager sessionManager)
         return users;
     }
 
-    public async Task<List<Comment>> GetPostCommentsAsync(string postUUid)
+    public async Task<List<NebulaGraphDemo.Dto.Comment>> GetPostCommentsAsync(string postUUid)
     {
         var query = $"GO FROM '{postUUid}' OVER comment REVERSELY YIELD edge AS e";
         var result = await _queryExecutor.ExecuteAsync(query);
 
-        var comments = GenericNebulaDataConverter.ConvertToEntityList<Comment>(result);
+        var comments = GenericNebulaDataConverter.ConvertToEntityList<NebulaGraphDemo.Dto.Comment>(result);
         return comments;
     }
     

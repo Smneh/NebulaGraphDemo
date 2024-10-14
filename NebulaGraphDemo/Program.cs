@@ -328,7 +328,7 @@ class Program
 
     private static async Task<(string, string)> CreatePosts()
     {
-        var post1 = new Post
+        var post1 = new PostEntity
         {
             IssuerId = "smneh",
             IssuerType = 1,
@@ -377,7 +377,7 @@ class Program
             ]
         };
 
-        var post2 = new Post
+        var post2 = new PostEntity
         {
             IssuerId = "hamid",
             IssuerType = 1,

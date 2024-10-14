@@ -21,4 +21,5 @@ public class Channel
     public int PostCount { get; set; }
     public bool IsPinned { get; set; } = default;
     public List<Admin> Admins { get; set; }
+    public bool IsFollowing { get; set; } = default;
 }

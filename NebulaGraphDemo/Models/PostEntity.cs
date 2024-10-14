@@ -2,7 +2,7 @@
 
 namespace NebulaGraphDemo.Models;
 
-public class Post
+public class PostEntity
 {
     public string IssuerId { get; set; }
     public int IssuerType { get; set; }
