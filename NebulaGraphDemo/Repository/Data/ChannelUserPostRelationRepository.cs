@@ -79,7 +79,8 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
         
         var query = @$"MATCH (u:user {{username: '{username}'}})-[:follow]->(followed)
                         MATCH (p:post)-[:belongs_to]->(followed)
-                        RETURN p";
+                        RETURN p, p.post.regDateTime as RegDateTime
+                        ORDER BY RegDateTime DESC";
                                 
         var result = await _queryExecutor.ExecuteAsync(query);
         

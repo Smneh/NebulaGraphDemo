@@ -63,6 +63,7 @@ public class ChannelRepository(NebulaSessionManager sessionManager)
 
     public async Task<NebulaGraphDemo.Dto.Channel?> GetChannelAsync(string channelId)
     {
+        // var query = $"LOOKUP ON channel WHERE channel.channelId == '{channelId}' YIELD channel.channelId, channel.title, channel.description;";
         var query = $"MATCH (ch:channel{{channelId:'{channelId}'}}) RETURN ch";
         var result = await _queryExecutor.ExecuteAsync(query);
 
