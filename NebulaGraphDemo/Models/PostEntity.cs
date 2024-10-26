@@ -29,6 +29,6 @@ public class PostEntity
     public string? ContentUuid { get; set; }
     public string? ParentUuid { get; set; }
     public bool Edited { get; set; } = false;
-    public DateTime EditDateTime { get; set; }
+    public DateTime? EditDateTime { get; set; }
     public List<Attachment>? Attachments { get; set; } = new();
 }

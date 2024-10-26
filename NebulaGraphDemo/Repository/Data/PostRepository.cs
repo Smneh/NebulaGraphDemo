@@ -54,7 +54,6 @@ public class PostRepository(NebulaSessionManager sessionManager)
     public async Task CreatePostAsync(Dto.Post post)
     {
         var regDateTimeFormatted = post.RegDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
-        var editDateTimeFormatted = post.EditDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
 
         var query = $@"
         INSERT VERTEX post (
@@ -70,7 +69,7 @@ public class PostRepository(NebulaSessionManager sessionManager)
             datetime(""{regDateTimeFormatted}""), {post.LikeCount}, {post.CommentCount}, {post.ViewCount}, '{post.Content}', 
             {post.IssuerPostId}, {post.IsSurvey}, {post.PostTypeId}, '{post.ParentIssuerType}',
             {post.SurveyId}, {post.ShareCount}, '{post.uuid}', '{post.ContentUuid}', '{post.ParentUuid}', 
-            {post.Edited}, datetime(""{editDateTimeFormatted}""), '{post.Attachments}');";
+            {post.Edited}, null, '{post.Attachments}');";
 
         var result = await _queryExecutor.ExecuteAsync(query);
         Console.WriteLine($"post created: {post.uuid}, Result: {result}");

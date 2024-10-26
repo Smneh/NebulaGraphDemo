@@ -27,6 +27,6 @@ public class Post
     public string? ContentUuid { get; set; }
     public string? ParentUuid { get; set; }
     public bool Edited { get; set; } = false;
-    public DateTime EditDateTime { get; set; }
+    public DateTime? EditDateTime { get; set; }
     public string Attachments { get; set; }
 }
