@@ -36,7 +36,7 @@ public class ChannelUserPostRelationRepository(NebulaSessionManager sessionManag
         await _queryExecutor.ExecuteAsync(query);
     }
     
-    public async Task AddPostFollowEdgeAsync(string username, string issuerId)
+    public async Task AddFollowEdgeAsync(string username, string issuerId)
     {
         var regDateTimeFormatted = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
         

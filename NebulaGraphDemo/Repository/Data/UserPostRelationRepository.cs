@@ -65,7 +65,6 @@ public class UserPostRelationRepository(NebulaSessionManager sessionManager)
         await _queryExecutor.ExecuteAsync(query);
     }
     
-    
     public async Task AddPostCommentEdgeAsync(string username, string postUUid, Comment comment)
     {
         var regDateTimeFormatted = comment.RegDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");

@@ -488,7 +488,7 @@ class Program
 
     private static async Task RegisterFollowRelationSection(string username, string issuerId)
     {
-        await _channelUserPostRelationRepository.AddPostFollowEdgeAsync(username, issuerId);
+        await _channelUserPostRelationRepository.AddFollowEdgeAsync(username, issuerId);
     }    
     
     private static async Task PostUserChannelRelationSection(string issuerId, string uuid)
